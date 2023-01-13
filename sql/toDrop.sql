@@ -1,0 +1,12 @@
+DROP TABLE IF EXISTS `world.entity.players.quests`;
+DROP TABLE IF EXISTS `world.entity.pets`;
+DROP TABLE IF EXISTS `world.entity.objects`;
+DROP TABLE IF EXISTS `world.entity.mounts`;
+DROP TABLE IF EXISTS `world.entity.guilds`;
+DROP TABLE IF EXISTS `site.user.votes`;
+DROP TABLE IF EXISTS `site.timeline.news`;
+DROP TABLE IF EXISTS `site.shop.purchase`;
+DROP TABLE IF EXISTS `site.shop.points.purchase`;
+DROP TABLE IF EXISTS `site.shop.objects.templates`;
+DROP TABLE IF EXISTS `site.shop.objects`;
+DROP TABLE IF EXISTS `site.shop.categories`;

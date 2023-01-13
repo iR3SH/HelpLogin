@@ -1,0 +1,6 @@
+/bin/
+/.settings/
+/Logs/
+config.properties
+.classpath
+.project
