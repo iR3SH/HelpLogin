@@ -17,6 +17,7 @@ Merci de pas le vendre , vous avez reçu gratuitement , donnez gratuitement 🤗
 
 ## DEBUG :
 
+-  System de ban fonctionne correctement
 
 ## AUTRES :
 
