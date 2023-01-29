@@ -77,16 +77,13 @@ public class AccountData extends AbstractDAO<Account> {
         return state;
     }
     @Override
-    public boolean update(Account obj) {
+    public boolean update(Account account) {
         try {
-            String baseQuery = "UPDATE accounts SET account = '"
-                    + obj.getName() + "', banned = '"
-                    + obj.isBanned() + "', bannedTime = '"
-                    + obj.getBannedTime() + "', " + " pass = '" + obj.getPass() + "',"
-                    + " pseudo = '" + obj.getPseudo() + "'," + " question = '"
-                    + obj.getQuestion() + "'," + " logged = '" + obj.getState()
-                    + "'," + " subscribe = '" + obj.getSubscribe() + "'"
-                    + " WHERE guid = '" + obj.getUUID() + "';";
+            String baseQuery = "UPDATE accounts SET "
+            		+ "banned = '" + (account.isBanned() ? "1" : "0") + "',"
+            		+ "bannedTime = '" + account.getBannedTime() + "',"
+            		+ "logged = '" + account.getState()+ "' "
+            		+ "WHERE guid = '" + account.getUUID() + "';";
 
             PreparedStatement statement = getPreparedStatement(baseQuery);
             execute(statement);
@@ -148,7 +145,7 @@ public class AccountData extends AbstractDAO<Account> {
         return banned;
     }
     
-    public boolean isBanned(Account account) {
+    public boolean refreshBanned(Account account) {
         boolean banned = false;
         try {
             String query = "SELECT * FROM accounts WHERE guid = '" + account.getUUID() + "' AND banned = '1';";
