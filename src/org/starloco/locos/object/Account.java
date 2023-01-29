@@ -88,6 +88,7 @@ public class Account {
     }
 
     public boolean isBanned() {
+    	Main.database.getAccountData().isBanned(this);
         return this.banned;
     }
 

@@ -19,10 +19,11 @@ class AccountQueue {
      */
 
     public static void verify(final LoginClient client) {
-        final Account account = client.getAccount(), recentLoad = Main.database.getAccountData().load(account.getName());
-        byte state = recentLoad.getState();
+        final Account account = client.getAccount();
+        byte state = Main.database.getAccountData().getRecentState(account.getName());
+        final boolean isBannedIp = Main.database.getAccountData().isBannedIp(client.getIoSession().getRemoteAddress().toString().replace("/", "").split(":")[0]);
 
-        if (Main.database.getAccountData().isBanned(client.getIoSession().getRemoteAddress().toString().replace("/", "").split(":")[0]) || account.isBanned())
+        if (isBannedIp || account.isBanned())
             state = 3;
 
         switch (state) {
@@ -73,9 +74,8 @@ class AccountQueue {
                 return;
 
             case 3: //banned
-                if(recentLoad.getBannedTime() > 0) {
-                    long time = recentLoad.getBannedTime() - System.currentTimeMillis();
-                    System.out.println(time);
+                if(!isBannedIp && account.getBannedTime() > 0) {
+                    long time = account.getBannedTime() - System.currentTimeMillis();
                     if(time < 0) {
                         account.setBanned(false);
                         account.setBannedTime(0);

@@ -59,7 +59,23 @@ public class AccountData extends AbstractDAO<Account> {
         }
         return account;
     }
+    
+    public byte getRecentState(String name)
+    {
+    	byte state = 0;
+        try {
+            String query = "SELECT * FROM accounts WHERE account = '" + name + "';";
+            Result result = super.getData(query);
+            ResultSet resultSet = result.resultSet;
 
+            if (resultSet.next()) 
+            	state = resultSet.getByte("logged");
+            close(result);
+        } catch (Exception e) {
+            logger.error("Can't know the state of {}", name);
+        }
+        return state;
+    }
     @Override
     public boolean update(Account obj) {
         try {
@@ -115,7 +131,7 @@ public class AccountData extends AbstractDAO<Account> {
         }
     }
 
-    public boolean isBanned(String ip) {
+    public boolean isBannedIp(String ip) {
         boolean banned = false;
         try {
             String query = "SELECT * FROM banip WHERE 'ip' LIKE '" + ip + "';";
@@ -128,6 +144,26 @@ public class AccountData extends AbstractDAO<Account> {
             close(result);
         } catch (Exception e) {
             logger.error("Can't know if ip {} is banned", ip);
+        }
+        return banned;
+    }
+    
+    public boolean isBanned(Account account) {
+        boolean banned = false;
+        try {
+            String query = "SELECT * FROM accounts WHERE guid = '" + account.getUUID() + "' AND banned = '1';";
+            Result result = super.getData(query);
+            ResultSet resultSet = result.resultSet;
+
+            if (resultSet.next()) {
+            	banned = true;
+            	account.setBanned(true);
+            	account.setBannedTime(resultSet.getLong("bannedTime"));
+            }
+
+            close(result);
+        } catch (Exception e) {
+            logger.error("Can't know if name {} is banned", account.getName());
         }
         return banned;
     }
