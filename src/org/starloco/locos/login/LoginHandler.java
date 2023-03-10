@@ -1,5 +1,6 @@
 package org.starloco.locos.login;
 
+import org.starloco.locos.exchange.ExchangeClient;
 import org.starloco.locos.kernel.Config;
 import org.starloco.locos.kernel.Console;
 import org.starloco.locos.tool.packetfilter.PacketFilter;
@@ -48,12 +49,24 @@ public class LoginHandler implements IoHandler {
     }
 
     @Override
+    public void inputClosed(IoSession arg0) throws Exception {
+        Console.instance.write("session " + arg0.getId() + " closed");
+
+        if (arg0.getAttribute("client") instanceof LoginClient) {
+            LoginClient client = (LoginClient) arg0.getAttribute("client");
+            client.getAccount().setState(0);
+            client.kick();
+        }
+    }
+
+    @Override
     public void sessionClosed(IoSession arg0) throws Exception {
         Console.instance.write("session " + arg0.getId() + " closed");
 
         if (arg0.getAttribute("client") instanceof LoginClient) {
             LoginClient client = (LoginClient) arg0.getAttribute("client");
             client.getAccount().setState(0);
+            client.kick();
         }
     }
 

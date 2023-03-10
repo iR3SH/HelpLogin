@@ -49,11 +49,20 @@ class ExchangeHandler implements IoHandler {
     }
 
     @Override
+    public void inputClosed(IoSession session) throws Exception {
+        Console.instance.write("eSession " + session.getId() + " closed");
+        final ExchangeClient client = (ExchangeClient) session.getAttribute("client");
+        client.getServer().setState(0);
+        client.kick();
+        this.setLogged(session, "sessionClosed");
+    }
+
+    @Override
     public void sessionClosed(IoSession session) throws Exception {
         Console.instance.write("eSession " + session.getId() + " closed");
         final ExchangeClient client = (ExchangeClient) session.getAttribute("client");
         client.getServer().setState(0);
-        
+        client.kick();
         this.setLogged(session, "sessionClosed");
     }
 

@@ -40,8 +40,7 @@ public class LoginClient {
     }
 
     public void kick() {
-        if (Config.loginServer.clients.containsKey(this.getAccount().getName()))
-            Config.loginServer.clients.remove(this.getAccount().getName());
+        Config.loginServer.clients.remove(this.getAccount().getName());
         this.ioSession.close(true);
     }
 
