@@ -18,9 +18,10 @@ public class Account {
     private boolean banned = false;
     private boolean isMj = false;
     private final Map<Integer, Player> players = new HashMap<>();
+    private String switchPacketKey;
 
     public Account(int UUID, String name, String pass, String pseudo,
-                   String question, byte state, long subscribe, byte banned, long bannedTime) {
+                   String question, byte state, long subscribe, byte banned, long bannedTime, String switchPacketKey) {
         this.UUID = UUID;
         this.name = name;
         this.pass = pass;
@@ -30,6 +31,7 @@ public class Account {
         this.subscribe = subscribe;
         this.banned = (banned != 0);
         if(this.banned) this.bannedTime = bannedTime;
+        this.switchPacketKey = switchPacketKey;
     }
 
     public int getUUID() {
@@ -115,5 +117,13 @@ public class Account {
 
     public Map<Integer, Player> getPlayers() {
         return players;
+    }
+
+    public String getSwitchPacketKey() {
+        return switchPacketKey;
+    }
+
+    public void setSwitchPacketKey(String switchPacketKey) {
+        this.switchPacketKey = switchPacketKey;
     }
 }

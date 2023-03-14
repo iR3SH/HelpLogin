@@ -1,7 +1,14 @@
 package org.starloco.locos.login.packet;
 
+import ch.qos.logback.core.net.server.Client;
+import org.starloco.locos.database.Database;
 import org.starloco.locos.kernel.Console;
+import org.starloco.locos.kernel.Main;
 import org.starloco.locos.login.LoginClient;
+
+import java.util.UUID;
+
+import static org.starloco.locos.login.LoginClient.Status.SERVER;
 
 public class PacketHandler {
 
@@ -14,15 +21,25 @@ public class PacketHandler {
                 break;
 
             case WAIT_ACCOUNT: // a modifier
-                if (packet.length() < 3) {
-                    Console.instance.write("[" + client.getIoSession().getId() + "] Sending of packet '" + packet + "' to verify the account. The client going to be kicked.");
-                    client.send("AlEf");
-                    client.kick();
-                    return;
+                if (!client.isSwitchPacketState()) {
+                    if (!packet.equals("#S")) {
+                        if (packet.length() < 3) {
+                            Console.instance.write("[" + client.getIoSession().getId() + "] Sending of packet '" + packet + "' to verify the account. The client going to be kicked.");
+                            client.send("AlEf");
+                            client.kick();
+                            return;
+                        }
+                        Console.instance.write("[" + client.getIoSession().getId() + "] Verification of account '" + packet + "'.");
+                        AccountName.verify(client, packet);
+                    }
+                    else {
+                        client.setSwitchPacketState(true);
+                    }
                 }
-
-                Console.instance.write("[" + client.getIoSession().getId() + "] Verification of account '" + packet + "'.");
-                AccountName.verify(client, packet);
+                else{
+                    String replaced_packet = packet.replaceAll("\n", "");
+                    client.setAccountBySwitchPacketKey(replaced_packet);
+                }
                 break;
 
             case WAIT_PASSWORD: // ok
@@ -43,39 +60,45 @@ public class PacketHandler {
                 break;
 
             case SERVER:
-                switch (packet.substring(0, 2)) {
-                    case "AF":
-                        FriendServerList.get(client, packet.substring(2));
-                        break;
-
-                    case "Af": // ok
-                        AccountQueue.verify(client);
-                        break;
-
-                    case "AX":
-                        ServerSelected.get(client, packet.substring(2));
-                        break;
-
-                    case "Ax":
-                        ServerList.get(client);
-                        break;
-
-                    case "BA":
-                        client.send(packet.substring(2));
-                        break;
-                    // Modif
-                    case "Ap":
-                        break;
-
-                    case"Ai":
-                        break;
-
-                    default:
-                        client.kick();
-                        break;
-                }
+                ServerParse(client, packet);
                 break;
 
+        }
+    }
+
+    public static void ServerParse(LoginClient client, String packet)
+    {
+        switch (packet.substring(0, 2)) {
+            case "AF":
+                FriendServerList.get(client, packet.substring(2));
+                break;
+
+            case "Af": // ok
+                AccountQueue.verify(client);
+                break;
+
+            case "AX":
+                ServerSelected.get(client, packet.substring(2));
+                break;
+
+            case "Ax":
+                ServerList.get(client);
+                break;
+
+            case "BA":
+                client.send(packet.substring(2));
+                break;
+            // Modif
+            case "Ap":
+                break;
+            // Demande de Clé pour le Changement de Personnage
+            case"Ai":
+                client.getAccount().setSwitchPacketKey(UUID.randomUUID().toString());
+                Main.database.getAccountData().update(client.getAccount());
+                break;
+            default:
+                client.kick();
+                break;
         }
     }
 }

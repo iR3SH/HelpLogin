@@ -22,7 +22,9 @@ class AccountQueue {
         final Account account = client.getAccount();
         byte state = Main.database.getAccountData().getRecentState(account.getName());
         final boolean isBannedIp = Main.database.getAccountData().isBannedIp(client.getIoSession().getRemoteAddress().toString().replace("/", "").split(":")[0]);
-
+        if(client.isSwitchPacketState()){
+            client.setSwitchPacketState(false);
+        }
         Main.database.getAccountData().refreshBanned(account);
         
         if (isBannedIp || account.isBanned())

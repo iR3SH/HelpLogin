@@ -54,8 +54,10 @@ public class LoginHandler implements IoHandler {
 
         if (arg0.getAttribute("client") instanceof LoginClient) {
             LoginClient client = (LoginClient) arg0.getAttribute("client");
-            client.getAccount().setState(0);
-            client.kick();
+            if(client != null) {
+                client.getAccount().setState(0);
+                client.kick();
+            }
         }
     }
 
@@ -65,8 +67,10 @@ public class LoginHandler implements IoHandler {
 
         if (arg0.getAttribute("client") instanceof LoginClient) {
             LoginClient client = (LoginClient) arg0.getAttribute("client");
-            client.getAccount().setState(0);
-            client.kick();
+            if(client != null) {
+                client.getAccount().setState(0);
+                client.kick();
+            }
         }
     }
 
@@ -89,6 +93,7 @@ public class LoginHandler implements IoHandler {
     public void sessionOpened(IoSession arg0) throws Exception {
         Console.instance.write("session " + arg0.getId() + " oppened");
     }
+
 
     String genKey() {
         String alphabet = "abcdefghijklmnopqrstuvwxyz";

@@ -59,6 +59,26 @@ public class AccountData extends AbstractDAO<Account> {
         }
         return account;
     }
+    public Account loadBySwitchPacketKey(String switchPacketKey) {
+        Account account = null;
+        try {
+            String query = "SELECT * FROM accounts WHERE switchPacketKey LIKE '" + switchPacketKey + "%';";
+            Result result = super.getData(query);
+            account = loadFromResultSet(result.resultSet);
+            close(result);
+            if (account != null) {
+                query = "UPDATE accounts SET reload_needed = 0 WHERE guid = '"
+                        + account.getUUID() + "';";
+                super.execute(query);
+                logger.debug("Account with switchPacketKey {} successfully loaded", switchPacketKey);
+            } else {
+                logger.debug("Account with switchPacketKey {} failed to load", switchPacketKey);
+            }
+        } catch (Exception e) {
+            logger.error("Can't load account with switchPacketKey " + switchPacketKey, e);
+        }
+        return account;
+    }
     
     public byte getRecentState(String name)
     {
@@ -82,7 +102,8 @@ public class AccountData extends AbstractDAO<Account> {
             String baseQuery = "UPDATE accounts SET "
             		+ "banned = '" + (account.isBanned() ? "1" : "0") + "',"
             		+ "bannedTime = '" + account.getBannedTime() + "',"
-            		+ "logged = '" + account.getState()+ "' "
+            		+ "logged = '" + account.getState()+ "', "
+                    + "switchPacketKey = '" + account.getSwitchPacketKey() + "' "
             		+ "WHERE guid = '" + account.getUUID() + "';";
 
             PreparedStatement statement = getPreparedStatement(baseQuery);
@@ -168,7 +189,7 @@ public class AccountData extends AbstractDAO<Account> {
     Account loadFromResultSet(ResultSet resultSet)
             throws SQLException {
         if (resultSet.next())
-            return new Account(resultSet.getInt("guid"), resultSet.getString("account").toLowerCase(), resultSet.getString("pass"), resultSet.getString("pseudo"), resultSet.getString("question"), resultSet.getByte("logged"), resultSet.getLong("subscribe"), resultSet.getByte("banned"), resultSet.getLong("bannedTime"));
+            return new Account(resultSet.getInt("guid"), resultSet.getString("account").toLowerCase(), resultSet.getString("pass"), resultSet.getString("pseudo"), resultSet.getString("question"), resultSet.getByte("logged"), resultSet.getLong("subscribe"), resultSet.getByte("banned"), resultSet.getLong("bannedTime"), resultSet.getString("switchPacketKey"));
         return null;
     }
 }
