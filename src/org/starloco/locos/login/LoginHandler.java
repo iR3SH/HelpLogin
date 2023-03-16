@@ -1,6 +1,5 @@
 package org.starloco.locos.login;
 
-import org.starloco.locos.exchange.ExchangeClient;
 import org.starloco.locos.kernel.Config;
 import org.starloco.locos.kernel.Console;
 import org.starloco.locos.tool.packetfilter.PacketFilter;
@@ -29,7 +28,7 @@ public class LoginHandler implements IoHandler {
     @Override
     public void exceptionCaught(IoSession arg0, Throwable arg1)
             throws Exception {
-        Console.instance.write("session " + arg0.getId() + " exception : " + arg1.getMessage());
+        write("session " + arg0.getId() + " exception : " + arg1.getMessage());
     }
 
     @Override
@@ -37,7 +36,7 @@ public class LoginHandler implements IoHandler {
         if (arg0.getAttribute("client") instanceof LoginClient) {
             LoginClient client = (LoginClient) arg0.getAttribute("client");
             for(String data : ((String) arg1).split("\n")) {
-                Console.instance.write("session " + arg0.getId() + " : recv < " + data);
+                write("session " + arg0.getId() + " : recv < " + data);
                 client.parser(data);
             }
         }
@@ -45,31 +44,33 @@ public class LoginHandler implements IoHandler {
 
     @Override
     public void messageSent(IoSession arg0, Object arg1) throws Exception {
-        Console.instance.write("session " + arg0.getId() + " : sent > " + arg1.toString());
+        write("session " + arg0.getId() + " : sent > " + arg1.toString());
     }
 
     @Override
     public void inputClosed(IoSession arg0) throws Exception {
-        Console.instance.write("session " + arg0.getId() + " closed");
+        write("session input " + arg0.getId() + " closed");
 
         if (arg0.getAttribute("client") instanceof LoginClient) {
             LoginClient client = (LoginClient) arg0.getAttribute("client");
             if(client != null) {
                 client.getAccount().setState(0);
                 client.kick();
+                arg0.close(true);
             }
         }
     }
 
     @Override
     public void sessionClosed(IoSession arg0) throws Exception {
-        Console.instance.write("session " + arg0.getId() + " closed");
+        write("session " + arg0.getId() + " closed");
 
         if (arg0.getAttribute("client") instanceof LoginClient) {
             LoginClient client = (LoginClient) arg0.getAttribute("client");
             if(client != null) {
                 client.getAccount().setState(0);
                 client.kick();
+                arg0.close(true);
             }
         }
     }
@@ -79,19 +80,19 @@ public class LoginHandler implements IoHandler {
         if (!filter.authorizes(arg0.getRemoteAddress().toString().substring(1).split(":")[0]))
             arg0.close(true);
         else {
-            Console.instance.write("session " + arg0.getId() + " created");
+            write("session " + arg0.getId() + " created");
             arg0.setAttribute("client", new LoginClient(arg0, genKey()));
         }
     }
 
     @Override
     public void sessionIdle(IoSession arg0, IdleStatus arg1) throws Exception {
-        Console.instance.write("session " + arg0.getId() + " idle");
+        write("session " + arg0.getId() + " idle");
     }
 
     @Override
     public void sessionOpened(IoSession arg0) throws Exception {
-        Console.instance.write("session " + arg0.getId() + " oppened");
+        write("session " + arg0.getId() + " oppened");
     }
 
 
@@ -103,5 +104,9 @@ public class LoginHandler implements IoHandler {
         for (int i = 0; i < 32; i++)
             hashKey.append(alphabet.charAt(rand.nextInt(alphabet.length())));
         return hashKey.toString();
+    }
+
+    private void write(String message) {
+        Console.instance.write(message);
     }
 }

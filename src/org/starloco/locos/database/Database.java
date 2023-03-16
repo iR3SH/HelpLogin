@@ -36,21 +36,25 @@ public class Database {
         HikariConfig config = new HikariConfig();
 
         config.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
-        //config.setDataSourceClassName("org.mariadb.jdbc.MySQLDataSource");
         config.addDataSourceProperty("serverName", Config.host);
         config.addDataSourceProperty("port", Config.port);
         config.addDataSourceProperty("databaseName", Config.databaseName);
         config.addDataSourceProperty("user", Config.user);
         config.addDataSourceProperty("password", Config.pass);
-
-        dataSource = new HikariDataSource(config);
-        if (!testConnection(dataSource)) {
-            logger.error("Please check your username and password and database connection");
+        try {
+            dataSource = new HikariDataSource(config);
+            if (!testConnection(dataSource)) {
+                logger.error("Please check your username and password and database connection");
+                Main.exit();
+                return;
+            }
+            logger.info("Database connection established");
+            this.initializeData();
+        }catch (Exception ex)
+        {
+            logger.info("Database connection error");
             Main.exit();
-            return;
         }
-        logger.info("Database connection established");
-        this.initializeData();
     }
 
     public AccountData getAccountData() {

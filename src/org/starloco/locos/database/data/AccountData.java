@@ -166,15 +166,13 @@ public class AccountData extends AbstractDAO<Account> {
         return banned;
     }
     
-    public boolean refreshBanned(Account account) {
-        boolean banned = false;
+    public void refreshBanned(Account account) {
         try {
             String query = "SELECT * FROM accounts WHERE guid = '" + account.getUUID() + "' AND banned = '1';";
             Result result = super.getData(query);
             ResultSet resultSet = result.resultSet;
 
             if (resultSet.next()) {
-            	banned = true;
             	account.setBanned(true);
             	account.setBannedTime(resultSet.getLong("bannedTime"));
             }
@@ -183,7 +181,6 @@ public class AccountData extends AbstractDAO<Account> {
         } catch (Exception e) {
             logger.error("Can't know if name {} is banned", account.getName());
         }
-        return banned;
     }
 
     Account loadFromResultSet(ResultSet resultSet)

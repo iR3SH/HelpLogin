@@ -1,14 +1,10 @@
 package org.starloco.locos.login.packet;
 
-import ch.qos.logback.core.net.server.Client;
-import org.starloco.locos.database.Database;
 import org.starloco.locos.kernel.Console;
 import org.starloco.locos.kernel.Main;
 import org.starloco.locos.login.LoginClient;
 
 import java.util.UUID;
-
-import static org.starloco.locos.login.LoginClient.Status.SERVER;
 
 public class PacketHandler {
 
@@ -16,7 +12,7 @@ public class PacketHandler {
         switch (client.getStatus()) {
             case WAIT_VERSION: // ok
                 Console.instance.write("[" + client.getIoSession().getId() + "] Checking for version '" + packet + "'.");
-                Version.verify(client, packet);
+                Version.verify(client);
                 client.setClientVersion(packet);
                 break;
 
@@ -88,7 +84,6 @@ public class PacketHandler {
             case "BA":
                 client.send(packet.substring(2));
                 break;
-            // Modif
             case "Ap":
                 break;
             // Demande de Clé pour le Changement de Personnage

@@ -3,6 +3,9 @@ package org.starloco.locos.login.packet;
 import org.starloco.locos.login.LoginClient;
 import org.starloco.locos.login.LoginClient.Status;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 class Password {
 
     public static void verify(LoginClient client, String pass) {
@@ -25,7 +28,7 @@ class Password {
         char PPass, PKey;
         int APass, AKey, ANB, ANB2, somme1, somme2;
 
-        String decrypted = "";
+        StringBuilder decrypted = new StringBuilder();
 
         for (int i = 0; i < pass.length(); i += 2) {
             PKey = key.charAt(i / 2);
@@ -46,31 +49,31 @@ class Password {
 
             PPass = (char) (APass + AKey);
 
-            decrypted += PPass;
+            decrypted.append(PPass);
         }
 
-        return decrypted;
+        return decrypted.toString();
     }
 
-    /*private static String cryptPassword(String message, String type) {
+    private static String cryptPassword(String message, String type) {
         MessageDigest md;
         try {
             md = MessageDigest.getInstance(type);
             md.update(message.getBytes());
             byte[] mb = md.digest();
-            String out = "";
+            StringBuilder out = new StringBuilder();
             for (byte temp : mb) {
-                String s = Integer.toHexString(temp);
+                StringBuilder s = new StringBuilder(Integer.toHexString(temp));
                 while (s.length() < 2) {
-                    s = "0" + s;
+                    s.insert(0, "0");
                 }
-                s = s.substring(s.length() - 2);
-                out += s;
+                s = new StringBuilder(s.substring(s.length() - 2));
+                out.append(s);
             }
-            return out;
+            return out.toString();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
         return null;
-    }*/
+    }
 }

@@ -7,11 +7,11 @@ public enum EmulatorInfo {
     private String string;
     private double value;
 
-    private EmulatorInfo(String s) {
+    EmulatorInfo(String s) {
         this.string = s;
     }
 
-    private EmulatorInfo(double d) {
+    EmulatorInfo(double d) {
         this.value = d;
     }
 

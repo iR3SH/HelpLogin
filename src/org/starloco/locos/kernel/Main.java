@@ -11,6 +11,8 @@ import org.starloco.locos.object.Server;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -33,7 +35,7 @@ public class Main {
             System.setOut(new PrintStream(System.out, true, "IBM850"));
             new File("Logs").mkdir();
             new File("Logs/Error").mkdir();
-            System.setErr(new PrintStream(new FileOutputStream("Logs/Error/err - " + System.currentTimeMillis() + ".txt")));
+            System.setErr(new PrintStream(Files.newOutputStream(Paths.get("Logs/Error/err - " + System.currentTimeMillis() + ".txt"))));
         } catch (Exception e) {
             e.printStackTrace();
         }

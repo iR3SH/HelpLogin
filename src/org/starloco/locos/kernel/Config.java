@@ -64,9 +64,9 @@ public class Config {
             Config.user = properties.getProperty(Params.LOGIN_DB_USER.toString()); i++;
             Config.pass = properties.getProperty(Params.LOGIN_DB_PASS.toString()); i++;
             Config.databaseName = properties.getProperty(Params.LOGIN_DB_NAME.toString()); i++;
-            Config.webUrl = properties.getProperty(Params.LOGIN_WEB_URL.toString()); i = 0;
+            Config.webUrl = properties.getProperty(Params.LOGIN_WEB_URL.toString());
         } catch(Exception e) {
-            Console.instance.write(" > Config : not found or invalid parameters! (line " + (i == 0 ? "undefinded" : i) + ")");
+            Console.instance.write(" > Config : not found or invalid parameters! (line " + i + ")");
             verify(name);
             return;
         }

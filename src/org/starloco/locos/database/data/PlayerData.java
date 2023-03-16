@@ -6,15 +6,10 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.starloco.locos.database.AbstractDAO;
 import org.starloco.locos.object.Account;
 import org.starloco.locos.object.Player;
-import org.starloco.locos.object.Server;
 import org.slf4j.LoggerFactory;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class PlayerData extends AbstractDAO<Player> {
 
@@ -47,35 +42,6 @@ public class PlayerData extends AbstractDAO<Player> {
     public boolean update(Player obj) {
         // TODO Auto-generated method stub
         return false;
-    }
-
-    public Map<Server, ArrayList<Integer>> loadAllPlayersByAccountId(
-            int notServer, int account) {
-        Map<Server, ArrayList<Integer>> maps = new HashMap<>();
-        try {
-            Result result = getData("SELECT id,server FROM players WHERE account = '"
-                    + account + "' AND NOT server = '" + notServer + "';");
-            ResultSet resultSet = result.resultSet;
-
-            while (resultSet.next()) {
-                Server server = Server.servers.get(resultSet.getInt("server"));
-                int guid = resultSet.getInt("id");
-
-                if (maps.get(server) == null) {
-                    ArrayList<Integer> array = new ArrayList<>();
-                    array.add(guid);
-                    maps.put(server, array);
-                } else {
-                    maps.get(server).add(guid);
-                }
-            }
-
-            close(result);
-            logger.info("Players load for account {}", account);
-        } catch (SQLException e) {
-            logger.error("Can't load players for account {}", account, e);
-        }
-        return maps;
     }
 
     public int isLogged(Account account) {

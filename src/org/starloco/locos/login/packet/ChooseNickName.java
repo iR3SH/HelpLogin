@@ -15,12 +15,12 @@ class ChooseNickName {
             return;
         }
 
-        if (nickname.toLowerCase().equals(account.getName().toLowerCase())) {
+        if (nickname.equalsIgnoreCase(account.getName())) {
             client.send("AlEr");
             return;
         }
 
-        String s[] = {"admin", "modo", " ", "&", "é", "\"", "'",
+        String[] s = {"admin", "modo", " ", "&", "é", "\"", "'",
                 "(", "-", "è", "_", "ç", "à", ")", "=", "~", "#",
                 "{", "[", "|", "`", "^", "@", "]", "}", "°", "+",
                 "^", "$", "ù", "*", ",", ";", ":", "!", "<", ">",

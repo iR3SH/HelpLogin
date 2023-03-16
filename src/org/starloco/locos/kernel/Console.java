@@ -42,9 +42,10 @@ public class Console extends Thread {
                         break;
                     case "SEND":
                         String infos1 = infos[1];
+                        String message = line.substring(5).replace(infos1 + space, "");
                         LoginClient client = Config.loginServer.getClient(Long.parseLong(infos1));
-                        client.send(line.substring(5).replace(infos1 + space, ""));
-                        this.write("Send : " + line.substring(5).replace(infos1 + space, ""));
+                        client.send(message);
+                        this.write("Send : " + message);
                         break;
                     default:
                         this.write(" > Unknown command '" + infos[0].toUpperCase() + "' !");

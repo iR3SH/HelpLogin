@@ -8,16 +8,6 @@ import org.starloco.locos.object.Account;
 import org.starloco.locos.object.Server;
 
 class AccountQueue {
-
-    /**
-     * AlEa - None : D�j� en connexion. Veuillez r�essayer AlEb : Connexion
-     * refus�e. Ton compte a �t� banni. AlEc - None : Ce compte est d�j�
-     * connect� � un serveur de jeu. Veuillez r�essayer. AlEd : Tu viens de
-     * d�connecter un personnage utilisant d�j� ce compte. AlEe - None :
-     * ATTENTION : Vous devez utilisez vos identifiants ANkama Games ! ... AlEf
-     * : Connexion refus�e. Nom de compte ou mot de passe incorrect.
-     */
-
     public static void verify(final LoginClient client) {
         final Account account = client.getAccount();
         byte state = Main.database.getAccountData().getRecentState(account.getName());
@@ -41,7 +31,7 @@ class AccountQueue {
                 account.setState(0);
                 try {
                     // Pour chaque personnage du compte
-                    // On v�rifie s'ils sont logged = 1
+                    // On vérifie s'ils sont logged = 1
                     // Si c'est le cas, on retourne le serveur.
                     int logged = Main.database.getPlayerData().isLogged(account);
                     Server server = Server.get(logged);

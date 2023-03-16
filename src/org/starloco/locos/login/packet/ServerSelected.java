@@ -13,12 +13,6 @@ import java.util.Map.Entry;
 
 class ServerSelected {
 
-    /**
-     * AXEr : Vous n'êtes pas autorisé à rejoindre le serveur. AXEd : Le serveur
-     * selectionné n'est pas disponible. AXEf : Serveur : COMPLET. AXEs :
-     * Impossible de sélectionner ce perso car il est vendeur sur le serveur
-     * undefined.
-     */
     public static void get(LoginClient client, String packet) {
         Server server;
         Account account = client.getAccount();
@@ -68,7 +62,6 @@ class ServerSelected {
             return;
         }
 
-        //server.send("WA" + account.getUUID() + "#"); // By Coding Mestre, �vite "Erreur de protocole"
         server.send("WA" + account.getUUID() + ";" + client.getClientVersion() + "#");
 
         StringBuilder sb = new StringBuilder();

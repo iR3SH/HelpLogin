@@ -10,7 +10,6 @@ import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +19,7 @@ import java.util.TreeMap;
 public class LoginServer {
 
     public final Map<String, LoginClient> clients = new TreeMap<>();
-    private NioSocketAcceptor acceptor;
+    private final NioSocketAcceptor acceptor;
 
     public LoginServer() {
         acceptor = new NioSocketAcceptor();

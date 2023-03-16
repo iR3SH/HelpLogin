@@ -21,7 +21,7 @@ public class LoginClient {
     private Account account;
     private byte maitain = 0;
     
-    private String clientVersion; // By Coding Mestre
+    private String clientVersion;
     private boolean isSwitchPacketState = false;
 
     public LoginClient(IoSession ioSession, String key) {

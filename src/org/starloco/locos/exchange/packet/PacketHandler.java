@@ -55,11 +55,10 @@ public class PacketHandler {
                 case 'D' : // Data
                     switch(packet.charAt(1)) {
                         case 'I': // Id
-                            switch(Byte.parseByte(String.valueOf(packet.charAt(2)))) {
-                            	case 1: // Player
-                            		int id = Main.database.getWorldEntityData().getNextPlayerId();
-                            		client.send("DI1" + packet.substring(3) + ";" + id+ "#");
-                            		break;
+                            if(Byte.parseByte(String.valueOf(packet.charAt(2))) == 1) {
+                                int id = Main.database.getWorldEntityData().getNextPlayerId();
+                                client.send("DI1" + packet.substring(3) + ";" + id+ "#");
+                                break;
                             }
                             break;
 

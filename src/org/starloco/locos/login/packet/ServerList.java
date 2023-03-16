@@ -22,9 +22,9 @@ class ServerList {
 
             sb.append("|").append(server.getId()).append(",").append(i);
         }
-
-        Console.instance.write("[" + account.getClient().getIoSession().getId() + "] Sending list of server of account name " + account.getName() + ". List : '" + sb.toString() + "'");
-        return sb.toString();
+        String finalString = sb.toString();
+        Console.instance.write("[" + account.getClient().getIoSession().getId() + "] Sending list of server of account name " + account.getName() + ". List : '" + finalString + "'");
+        return finalString;
     }
 
     private static int characterNumber(Account account, int server) {

@@ -10,21 +10,21 @@ import org.apache.mina.core.session.IoSession;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
+import java.nio.charset.StandardCharsets;
 
 class ExchangeHandler implements IoHandler {
 
     @Override
     public void exceptionCaught(IoSession arg0, Throwable arg1) throws Exception {
         this.setLogged(arg0, "exceptionCaught : " + arg1.getMessage());
-        Console.instance.write("eSession " + arg0.getId() + " exception : " + arg1.getCause() + " : " + arg1.getMessage());
+        write("eSession " + arg0.getId() + " exception : " + arg1.getCause() + " : " + arg1.getMessage());
     }
 
     @Override
     public void messageReceived(IoSession session, Object packet) throws Exception {
         String string = new String(((IoBuffer) packet).array());
-        Console.instance.write("eSession " + session.getId() + " < " + string);
+        write("eSession " + session.getId() + " < " + string);
 
         ExchangeClient client = (ExchangeClient) session.getAttribute("client");
         String message = bufferToString(packet);
@@ -45,30 +45,32 @@ class ExchangeHandler implements IoHandler {
     public void messageSent(IoSession session, Object packet) throws Exception {
         String message = bufferToString(packet);
         this.setLogged(session, "messageSent : " + message);
-        Console.instance.write("eSession " + session.getId() + " > " + message);
+        write("eSession " + session.getId() + " > " + message);
     }
 
     @Override
-    public void inputClosed(IoSession session) throws Exception {
-        Console.instance.write("eSession " + session.getId() + " closed");
+    public void inputClosed(IoSession session) {
+        write("eSession " + session.getId() + " closed");
         final ExchangeClient client = (ExchangeClient) session.getAttribute("client");
         client.getServer().setState(0);
         client.kick();
+        session.close(true);
         this.setLogged(session, "sessionClosed");
     }
 
     @Override
     public void sessionClosed(IoSession session) throws Exception {
-        Console.instance.write("eSession " + session.getId() + " closed");
+        write("eSession " + session.getId() + " closed");
         final ExchangeClient client = (ExchangeClient) session.getAttribute("client");
         client.getServer().setState(0);
         client.kick();
+        session.close(true);
         this.setLogged(session, "sessionClosed");
     }
 
     @Override
-    public void sessionCreated(IoSession session) throws Exception {
-        Console.instance.write("eSession " + session.getId() + " created");
+    public void sessionCreated(IoSession session) {
+        write("eSession " + session.getId() + " created");
         session.setAttribute("client", new ExchangeClient(session));
 
         IoBuffer ioBuffer = IoBuffer.allocate(2048);
@@ -80,13 +82,13 @@ class ExchangeHandler implements IoHandler {
     }
 
     @Override
-    public void sessionIdle(IoSession session, IdleStatus arg1) throws Exception {
+    public void sessionIdle(IoSession session, IdleStatus arg1) {
         this.setLogged(session, "sessionIdle");
-        Console.instance.write("eSession " + session.getId() + " idle");
+        write("eSession " + session.getId() + " idle");
     }
 
     @Override
-    public void sessionOpened(IoSession arg0) throws Exception {
+    public void sessionOpened(IoSession arg0) {
         this.setLogged(arg0, "sessionOpened");
     }
 
@@ -96,7 +98,7 @@ class ExchangeHandler implements IoHandler {
         buffer.put((IoBuffer) o);
         buffer.flip();
 
-        CharsetDecoder cd = Charset.forName("UTF-8").newDecoder();
+        CharsetDecoder cd = StandardCharsets.UTF_8.newDecoder();
 
         try {
             return buffer.getString(cd);
@@ -109,5 +111,10 @@ class ExchangeHandler implements IoHandler {
     private void setLogged(IoSession arg0, String msg) {
         ExchangeClient client = (ExchangeClient) arg0.getAttribute("client");
         Logging.getInstance().write("Game", msg + " -> " + client.getServer().getId());
+    }
+
+    private void write(String message)
+    {
+        Console.instance.write(message);
     }
 }

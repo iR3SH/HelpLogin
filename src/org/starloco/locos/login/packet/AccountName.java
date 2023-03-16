@@ -23,7 +23,7 @@ class AccountName {
         }
 
 
-        if (Config.loginServer.clients.containsKey(name)) // S'il est d�j� en connexion, on le kick : pas bon, il faut v�rifier le mdp avant
+        if (Config.loginServer.clients.containsKey(name)) // S'il est déjà en connexion, on le kick : pas bon, il faut vérifier le mdp avant
             Config.loginServer.clients.get(name).kick();
         Config.loginServer.clients.put(name, client);
         client.setStatus(LoginClient.Status.WAIT_PASSWORD);

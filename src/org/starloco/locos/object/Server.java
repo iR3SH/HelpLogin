@@ -5,6 +5,7 @@ import org.starloco.locos.login.LoginHandler;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class Server {
 
@@ -27,10 +28,7 @@ public class Server {
     }
 
     public static Server get(int id) {
-        if (!servers.containsKey(id))
-            return null;
-        else
-            return servers.get(id);
+        return servers.getOrDefault(id, null);
     }
 
     private static void sendHostListToAll() {
@@ -39,7 +37,7 @@ public class Server {
 
     public static String getHostList() {
         StringBuilder sb = new StringBuilder("AH");
-        Server.servers.values().stream().filter(server -> server != null).forEach(server ->
+        Server.servers.values().stream().filter(Objects::nonNull).forEach(server ->
                 sb.append(sb.length() > 2 ? "|" : "").append(server.getId()).append(";").append(server.getState()).append(";110;1"));
         return sb.toString();
     }
