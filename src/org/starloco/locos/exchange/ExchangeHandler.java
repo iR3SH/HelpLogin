@@ -1,5 +1,6 @@
 package org.starloco.locos.exchange;
 
+import org.apache.mina.filter.FilterEvent;
 import org.starloco.locos.kernel.Console;
 import org.starloco.locos.kernel.Logging;
 import org.apache.mina.core.buffer.IoBuffer;
@@ -50,22 +51,34 @@ class ExchangeHandler implements IoHandler {
 
     @Override
     public void inputClosed(IoSession session) {
-        write("eSession " + session.getId() + " closed");
-        final ExchangeClient client = (ExchangeClient) session.getAttribute("client");
-        client.getServer().setState(0);
-        client.kick();
-        session.close(true);
-        this.setLogged(session, "sessionClosed");
+        if(session != null) {
+            write("eInput " + session.getId() + " closed");
+            final ExchangeClient client = (ExchangeClient) session.getAttribute("client");
+            if(client != null) {
+                client.getServer().setState(0);
+                client.kick();
+            }
+            session.closeNow();
+            this.setLogged(session, "sessionClosed");
+        }
+    }
+
+    @Override
+    public void event(IoSession ioSession, FilterEvent filterEvent) throws Exception {
     }
 
     @Override
     public void sessionClosed(IoSession session) throws Exception {
-        write("eSession " + session.getId() + " closed");
-        final ExchangeClient client = (ExchangeClient) session.getAttribute("client");
-        client.getServer().setState(0);
-        client.kick();
-        session.close(true);
-        this.setLogged(session, "sessionClosed");
+        if(session != null) {
+            write("eSession " + session.getId() + " closed");
+            final ExchangeClient client = (ExchangeClient) session.getAttribute("client");
+            if(client != null) {
+                client.getServer().setState(0);
+                client.kick();
+            }
+            session.closeNow();
+            this.setLogged(session, "sessionClosed");
+        }
     }
 
     @Override

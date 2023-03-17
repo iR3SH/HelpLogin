@@ -1,5 +1,6 @@
 package org.starloco.locos.login;
 
+import org.apache.mina.filter.FilterEvent;
 import org.starloco.locos.kernel.Config;
 import org.starloco.locos.kernel.Console;
 import org.starloco.locos.tool.packetfilter.PacketFilter;
@@ -49,36 +50,43 @@ public class LoginHandler implements IoHandler {
 
     @Override
     public void inputClosed(IoSession arg0) throws Exception {
-        write("session input " + arg0.getId() + " closed");
-
-        if (arg0.getAttribute("client") instanceof LoginClient) {
-            LoginClient client = (LoginClient) arg0.getAttribute("client");
-            if(client != null) {
-                client.getAccount().setState(0);
-                client.kick();
-                arg0.close(true);
+        if(arg0 != null) {
+            write("Input " + arg0.getId() + " closed");
+            if (arg0.getAttribute("client") instanceof LoginClient) {
+                LoginClient client = (LoginClient) arg0.getAttribute("client");
+                if (client != null) {
+                    client.getAccount().setState(0);
+                    client.kick();
+                }
             }
+            arg0.closeNow();
         }
     }
 
     @Override
-    public void sessionClosed(IoSession arg0) throws Exception {
-        write("session " + arg0.getId() + " closed");
+    public void event(IoSession ioSession, FilterEvent filterEvent) throws Exception {
 
-        if (arg0.getAttribute("client") instanceof LoginClient) {
-            LoginClient client = (LoginClient) arg0.getAttribute("client");
-            if(client != null) {
-                client.getAccount().setState(0);
-                client.kick();
-                arg0.close(true);
+    }
+
+    @Override
+    public void sessionClosed(IoSession arg0) throws Exception {
+        if(arg0 != null) {
+            write("Session " + arg0.getId() + " closed");
+            if (arg0.getAttribute("client") instanceof LoginClient) {
+                LoginClient client = (LoginClient) arg0.getAttribute("client");
+                if (client != null) {
+                    client.getAccount().setState(0);
+                    client.kick();
+                }
             }
+            arg0.closeNow();
         }
     }
 
     @Override
     public void sessionCreated(IoSession arg0) throws Exception {
         if (!filter.authorizes(arg0.getRemoteAddress().toString().substring(1).split(":")[0]))
-            arg0.close(true);
+            arg0.closeNow();
         else {
             write("session " + arg0.getId() + " created");
             arg0.setAttribute("client", new LoginClient(arg0, genKey()));
